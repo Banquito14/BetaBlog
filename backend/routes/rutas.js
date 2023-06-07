@@ -65,7 +65,7 @@ router.delete('/:id', async (req, res) => {
 // Agrega la imagen a un artículo existente
 router.put('/:id/image', upload.single('image'), async (req, res) => {
   try {
-    const article = await Article.findById(req.params.id);
+    const article = await Articulo.findById(req.params.id);
     if (!article) {
       return res.status(404).json({ error: 'Artículo no encontrado' });
     }
