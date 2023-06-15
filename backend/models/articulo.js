@@ -9,16 +9,16 @@ const articleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  author: {
+  autor: {
     type: String,
     required: true,
   },
-  imageUrl: {
+  imagen: {
     type: String,
     required: true,
   },
 });
 
-const Article = mongoose.model('Article', articleSchema);
+const Articulo = mongoose.model('Articulo', articleSchema);
 
-module.exports = Article;
+module.exports = Articulo;

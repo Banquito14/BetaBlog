@@ -1,6 +1,19 @@
 const express = require('express');
+const multer = require('multer');
 const router = express.Router();
 const Articulo = require('../models/articulo');
+
+// Configuración de multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/'); // Carpeta donde se almacenarán las imágenes
+  },
+  filename: function (req, file, cb) {
+    const timestamp = Date.now();
+    const filename = `${timestamp}-${file.originalname}`;
+    cb(null, filename); // Nombre de archivo único
+  },
+});
 
 // Obtener todos los artículos
 router.get('/', async (req, res) => {
@@ -13,7 +26,7 @@ router.get('/', async (req, res) => {
 });
 
 // Obtener un artículo por su ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const article = await Articulo.findById(req.params.id);
     if (!article) {
@@ -26,7 +39,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Crear un nuevo artículo
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   try {
     const article = new Articulo(req.body);
     const savedArticulo = await article.save();
@@ -61,7 +74,9 @@ router.delete('/:id', async (req, res) => {
     res.status(400).json({ error: 'Error al eliminar el artículo' });
   }
 });
+
 // Agrega la imagen a un artículo existente
+const upload = multer({ storage: storage });
 router.put('/:id/image', upload.single('image'), async (req, res) => {
   try {
     const article = await Articulo.findById(req.params.id);
@@ -69,8 +84,8 @@ router.put('/:id/image', upload.single('image'), async (req, res) => {
       return res.status(404).json({ error: 'Artículo no encontrado' });
     }
 
-    // Actualiza la propiedad de imageUrl del artículo con la ruta del archivo subido
-    article.imageUrl = req.file.path;
+    // Actualiza la propiedad de imagen del artículo con la ruta del archivo subido
+    article.imagen = req.file.path;
     const savedArticle = await article.save();
 
     res.json(savedArticle);
@@ -78,6 +93,5 @@ router.put('/:id/image', upload.single('image'), async (req, res) => {
     res.status(500).json({ error: 'Error al agregar la imagen al artículo' });
   }
 });
-
 
 module.exports = router;
