@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const rutas = require('./routes/rutas');
 const authRoutes = require('./routes/auth');
 
-
 const app = express();
 const port = 3000;
 
@@ -25,11 +24,11 @@ mongoose.connect('mongodb://localhost:27017/blog', {
   });
 
 // Rutas del API
+app.use('/api/rutas', rutas); // Asegúrate de que '/api/rutas' es la ruta correcta para tus rutas definidas en 'rutas.js'
+app.use('/api/auth', authRoutes); // Asegúrate de que '/api/auth' es la ruta correcta para tus rutas definidas en 'auth.js'
 app.use('/api/articulos', rutas);
-app.use('/api/auth', authRoutes);
 
 // Iniciar servidor
 app.listen(port, () => {
   console.log(`Servidor iniciado en el puerto ${port}`);
 });
-
