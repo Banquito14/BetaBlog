@@ -35,9 +35,9 @@ router.post('/registro', async (req, res, next) => {
 });
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
     // Verificar si el usuario existe en la base de datos
-    const usuario = await Usuario.findOne({ email });
+    const usuario = await Usuario.findOne({ username });
     if (!usuario) {
       return res.status(400).json({ mensaje: 'Credenciales inválidas' });
     }
@@ -56,6 +56,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ mensaje: 'Error en el servidor' });
   }
 });
+
 router.put('/usuarios/:id', async (req, res) => {
   try {
     const { id } = req.params;
