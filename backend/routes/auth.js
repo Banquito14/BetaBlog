@@ -15,14 +15,14 @@ router.get('/usuarios', async (req, res) => {
   });
 router.post('/registro', async (req, res, next) => {
   try {
-    const { username, password } = req.body;
-    // Verificar si el usuario ya existe en la base de datos
-    const usuarioExistente = await Usuario.findOne({ username });
+    const { username, password, email } = req.body;
+    // Verificar si el usuario o el correo electrónico ya existen en la base de datos
+    const usuarioExistente = await Usuario.findOne().or([{ username }, { email }]);
     if (usuarioExistente) {
-      return res.status(400).json({ mensaje: 'El usuario ya existe' });
+      return res.status(400).json({ mensaje: 'El usuario o el correo electrónico ya existen' });
     }
     // Crear un nuevo usuario
-    const nuevoUsuario = new Usuario({ username, password });
+    const nuevoUsuario = new Usuario({ username, password, email });
     // Encriptar la contraseña
     const salt = await bcrypt.genSalt(10);
     nuevoUsuario.password = await bcrypt.hash(password, salt);
@@ -32,7 +32,7 @@ router.post('/registro', async (req, res, next) => {
     console.log(error);
     res.status(500).json({ mensaje: 'Error en el servidor' });
   }
-});
+});  
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -57,44 +57,5 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.put('/usuarios/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { username, password } = req.body;
-
-    // Buscar y actualizar el usuario por su ID
-    const usuarioActualizado = await Usuario.findByIdAndUpdate(
-      id,
-      { username, password },
-      { new: true }
-    );
-
-    if (!usuarioActualizado) {
-      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
-    }
-
-    res.status(200).json({ mensaje: 'Usuario actualizado correctamente', usuario: usuarioActualizado });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ mensaje: 'Error en el servidor' });
-  }
-});
-router.delete('/usuarios/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    // Buscar y eliminar el usuario por su ID
-    const usuarioEliminado = await Usuario.findByIdAndDelete(id);
-
-    if (!usuarioEliminado) {
-      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
-    }
-
-    res.status(200).json({ mensaje: 'Usuario eliminado correctamente' });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ mensaje: 'Error en el servidor' });
-  }
-});
 
 module.exports = router;
