@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
-const articleSchema = new mongoose.Schema({
-  title: {
+const articuloSchema = new mongoose.Schema({
+  titulo: {
     type: String,
     required: true,
   },
-  content: {
+  contenido: {
     type: String,
     required: true,
   },
@@ -13,12 +13,12 @@ const articleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  imagen: {
+  imagenURL: {
     type: String,
     required: true,
   },
 });
 
-const Articulo = mongoose.model('Articulo', articleSchema);
+const Articulo = mongoose.model('Articulo', articuloSchema);
 
 module.exports = Articulo;
